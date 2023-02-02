@@ -1,24 +1,28 @@
 class Value:
-    def __init__(self, data, _op='', _children=()):
+    def __init__(self, data, _op='', _label='', _children=()):
         self.data = data
         self.grad = 0.0
         
+        self.label = _label
+        
         self._op = _op
         self._prev = set(_children)
-        self._backward = lambda: None
-
-        
-    def __repr__(self):
-        return f'({self._op}){self.data}|{self.grad}'
+        self._getstr = lambda: None
+        self._backward = lambda: None        
     
     def __add__(self, other):
         if not isinstance(other, Value):
             other = Value(other)
         out = Value(self.data + other.data, _op='+', _children=(self, other))
+        
         def _backward():
             self.grad += 1*out.grad
             other.grad += 1*out.grad
         out._backward = _backward
+        
+        def _getstr():
+            return f'({self})+({other})'
+        out._getstr = _getstr
         
         return out
     
@@ -31,6 +35,10 @@ class Value:
             other.grad += self.data*out.grad
         out._backward = _backward
         
+        def _getstr():
+            return f'({self})*({other})'
+        out._getstr = _getstr
+        
         return out
     
     def __pow__(self, other):
@@ -39,6 +47,10 @@ class Value:
         def _backward():
             self.grad += other * self.data**(other-1)
         out._backward = _backward
+        
+        def _getstr():
+            return f'({self})^({other})'
+        out._getstr = _getstr
         
         return out
     
@@ -62,3 +74,10 @@ class Value:
     
     def __rtruediv__(self, other):
         return (self**-1) * other
+    
+    def __repr__(self):
+        st = self._getstr()
+        if st == None:
+            return f'<{self.label}:{self.data}|{self.grad}>'
+        else:
+            return st
