@@ -12,10 +12,9 @@ p = x1 * w1
 q = x2 * w2
 
 n = p + q + b
-o = Value.tanh(n)
+o = n.tanh()
 
-o.backward()
-o.backward()
+o.zero_grad()
 o.backward()
 
 print('w1', w1, 'grad', w1.grad)

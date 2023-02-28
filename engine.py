@@ -13,14 +13,13 @@ class Value:
         self._backward = lambda: None        
     
     def backward(self):
-        self._zerograds()
         self.grad = 1.0
         self._recback()
         
-    def _zerograds(self):
+    def zero_grad(self):
         self.grad = 0.0
         for p in self._prev:
-            p._zerograds()
+            p.zero_grad()
     
     def _recback(self):
         self._backward()
