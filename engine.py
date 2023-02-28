@@ -35,10 +35,6 @@ class Value:
             self.grad += 1 - (num/den)**2
         out._backward = _backward
         
-        def _getstr():
-            return f'tanh[{self}]'
-        out._getstr = _getstr
-        
         return out
     
     def __add__(self, other):
@@ -51,12 +47,6 @@ class Value:
             other.grad += 1*out.grad
         out._backward = _backward
         
-        def _getstr():
-            selfstr = f'({self})' if self._op != '' else f'{self}'
-            otherstr = f'({other})' if other._op != '' else f'{other}'
-            return f'{selfstr} + {otherstr}'
-        out._getstr = _getstr
-        
         return out
     
     def __mul__(self, other):
@@ -68,12 +58,6 @@ class Value:
             other.grad += self.data*out.grad
         out._backward = _backward
         
-        def _getstr():
-            selfstr = f'({self})' if self._op != '' else f'{self}'
-            otherstr = f'({other})' if other._op != '' else f'{other}'
-            return f'{selfstr} * {otherstr}'
-        out._getstr = _getstr
-        
         return out
     
     def __pow__(self, other):
@@ -82,11 +66,6 @@ class Value:
         def _backward():
             self.grad += other * self.data**(other-1)
         out._backward = _backward
-        
-        def _getstr():
-            selfstr = f'({self})' if self._op != '' else f'{self}'
-            return selfstr + f'^{other}'
-        out._getstr = _getstr
         
         return out
     
@@ -112,11 +91,4 @@ class Value:
         return (self**-1) * other
     
     def __repr__(self):
-        st = self._getstr()
-        if st == None:
-            if self.label == '':
-                return str(self.data)
-            else:
-                return self.label
-        else:
-            return st
+        return f'Value(data={self.data})'

@@ -27,5 +27,4 @@ class MLP:
     def __call__(self, x):
         for layer in self.layers:
             x = layer(x)
-        x = [val.data for val in x]
         return x[0] if len(x) == 1 else x
