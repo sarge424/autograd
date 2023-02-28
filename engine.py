@@ -1,3 +1,5 @@
+import math 
+
 class Value:
     def __init__(self, data, _op='', _label='', _children=()):
         self.data = data
@@ -9,6 +11,36 @@ class Value:
         self._prev = set(_children)
         self._getstr = lambda: None
         self._backward = lambda: None        
+    
+    def backward(self):
+        self._zerograds()
+        self.grad = 1.0
+        self._recback()
+        
+    def _zerograds(self):
+        self.grad = 0.0
+        for p in self._prev:
+            p._zerograds()
+    
+    def _recback(self):
+        self._backward()
+        for p in self._prev:
+            p._recback()
+    
+    def tanh(self):
+        num = math.exp(self.data) - math.exp(-self.data)
+        den = math.exp(self.data) + math.exp(-self.data)
+        out = Value(num / den, _op='tanh', _children=(self,))
+        
+        def _backward():
+            self.grad += 1 - (num/den)**2
+        out._backward = _backward
+        
+        def _getstr():
+            return f'tanh[{self}]'
+        out._getstr = _getstr
+        
+        return out
     
     def __add__(self, other):
         if not isinstance(other, Value):
