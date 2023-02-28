@@ -3,11 +3,11 @@ import random
 
 class Neuron:
     def __init__(self, nin):
-        self.w = [random.uniform(-1, 1) for _ in range(nin)]
-        self.b = random.uniform(-1, 1)
+        self.w = [Value(random.uniform(-1, 1)) for _ in range(nin)]
+        self.b = Value(random.uniform(-1, 1))
         
     def __call__(self, x):
-        act = sum([wi + xi for (wi, xi) in zip(self.w, x)], self.b)
+        act = sum([wi * xi for (wi, xi) in zip(self.w, x)], self.b)
         out = act.tanh()
         return out
     
@@ -22,9 +22,10 @@ class Layer:
 class MLP:
     def __init__(self, nin, nouts):
         dims = [nin] + nouts
-        self.layers = [Layer(dims(i), dims(i+1)) for i in range(len(nouts))]
+        self.layers = [Layer(dims[i], dims[i+1]) for i in range(len(nouts))]
         
     def __call__(self, x):
         for layer in self.layers:
             x = layer(x)
-        return x
+        x = [val.data for val in x]
+        return x[0] if len(x) == 1 else x

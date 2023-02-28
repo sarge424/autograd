@@ -1,29 +1,16 @@
 from engine import Value
+import nn
 
-x1 = Value(2.0, _label='x1')
-x2 = Value(0.0, _label='x2')
+xs = [
+    [2.0, 3.0, -1.0],
+    [3.0, -1.0, 0.5],
+    [0.5, 1.0, 1.0],
+    [1.0, 1.0, -1.0]
+]
 
-w1 = Value(-3.0, _label='w1')
-w2 = Value(1.0, _label='w2')
+ys = [1.0, -1.0, -1.0, 1.0]
 
-b = Value(6.8813735870195432, _label='b')
+m = nn.MLP(3, [4, 4, 1])
+ypred = [m(x) for x in xs]
 
-p = x1 * w1
-q = x2 * w2
-
-n = p + q + b
-o = n.tanh()
-
-o.zero_grad()
-o.backward()
-
-print('w1', w1, 'grad', w1.grad)
-print('x1', x1, 'grad', x1.grad)
-print()
-print('w2', w2, 'grad', w2.grad)
-print('x2', x2, 'grad', x2.grad)
-print()
-print('p', p.data, 'grad', p.grad)
-print('q', q.data, 'grad', q.grad)
-print()
-print('o', o, 'data', o.data, 'grad', o.grad)
+print(ypred)
