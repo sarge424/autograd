@@ -12,7 +12,7 @@ ys = [1.0, -1.0, -1.0, 1.0]
 
 m = nn.MLP(3, [4, 4, 1])
 
-for i in range(1, 51):
+for i in range(1, 501):
     #forward pass
     ypred = [m(x) for x in xs]
     loss = sum([(yp - y)**2 for y, yp in zip(ys, ypred)])
